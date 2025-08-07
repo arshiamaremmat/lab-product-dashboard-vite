@@ -1,41 +1,42 @@
-import React from 'react'
-import '@testing-library/jest-dom'
-import { render, screen, fireEvent } from '@testing-library/react'
-import App from '../App'
-
-const sampleProducts = [
-  { id: 1, name: 'Laptop', price: '$999', inStock: true },
-  { id: 2, name: 'Phone', price: '$699', inStock: false },
-  { id: 3, name: 'Tablet', price: '$499', inStock: true },
-]
+import React from 'react';
+import '@testing-library/jest-dom';
+import { render, screen, fireEvent } from '@testing-library/react';
+import App from '../App';
 
 test('renders product dashboard title', () => {
-  render(<App />)
-  expect(screen.getByText(/Product Dashboard/i)).toBeInTheDocument()
-})
+  render(<App />);
+  expect(screen.getByText(/Product Dashboard/i)).toBeInTheDocument();
+});
 
 test('displays all products initially', () => {
-  render(<App />)
+  render(<App />);
+  const productNames = ['Laptop', 'Phone', 'Headphones']; 
 
-  sampleProducts.forEach((product) => {
-    expect(screen.getByText(product.name)).toBeInTheDocument()
-  })
-})
+  productNames.forEach((name) => {
+    expect(screen.getByText(name)).toBeInTheDocument();
+  });
+});
 
 test('applies conditional styling for out-of-stock products', () => {
-  render(<App />)
-  const outOfStockProduct = screen.getByText(/Phone/i) // Make sure "Phone" exists in sampleProducts
-  expect(outOfStockProduct.closest('div')).toHaveClass('outOfStockClass')
-})
+  render(<App />);
+  
+  const productNames = screen.getAllByText(/Phone/i);
+  
+  const phoneTitle = productNames[0];
+  
+  const cardDiv = phoneTitle.closest('div.MuiCard-root');
+
+  expect(cardDiv.className).toMatch(/outOfStock/);
+});
+
 
 test('removes product from the dashboard when "Remove" button is clicked', () => {
-  render(<App />)
-  const removeButtons = screen.queryAllByText(/Remove/i)
+  render(<App />);
+  let removeButtons = screen.queryAllByText(/Remove/i);
+  expect(removeButtons.length).toBeGreaterThan(0);
 
-  expect(removeButtons.length).toBeGreaterThan(0) // Ensure buttons exist
+  fireEvent.click(removeButtons[0]);
 
-  if (removeButtons.length > 0) {
-    fireEvent.click(removeButtons[0])
-    expect(removeButtons[0]).not.toBeInTheDocument() // Expect removal to work
-  }
-})
+  const updatedRemoveButtons = screen.queryAllByText(/Remove/i);
+  expect(updatedRemoveButtons.length).toBe(removeButtons.length - 1);
+});

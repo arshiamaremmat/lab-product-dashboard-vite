@@ -1,23 +1,35 @@
 import React, { useState } from 'react';
 import ProductList from './components/ProductList';
+import { Button, Stack } from '@mui/material';
 
-const App = () => {
-  // TODO: Define initial product data
+const sampleProducts = [
+  { id: 1, name: 'Laptop', price: 999, inStock: true },
+  { id: 2, name: 'Phone', price: 699, inStock: false },
+  { id: 3, name: 'Headphones', price: 499, inStock: true },
+];
 
-  // TODO: Implement state to manage filtering
+export default function App() {
+  const [showInStockOnly, setShowInStockOnly] = useState(false);
+  const [products, setProducts] = useState(sampleProducts);
 
-  // TODO: Implement logic to filter products based on availability
+  const filteredProducts = showInStockOnly
+    ? products.filter(p => p.inStock)
+    : products;
 
   return (
-    <div>
-      <h1>{/* TODO: Add 'Product Dashboard' title here */}</h1>
-      
-      {/* TODO: Add buttons to allow filtering by availability */}
+    <div style={{ padding: '2rem' }}>
+      <h1>Product Dashboard</h1>
+      <Stack direction="row" spacing={2} marginBottom={2}>
+        <Button
+          variant="contained"
+          color={showInStockOnly ? 'primary' : 'secondary'}
+          onClick={() => setShowInStockOnly(prev => !prev)}
+        >
+          {showInStockOnly ? 'Show All Products' : 'Show In-Stock Only'}
+        </Button>
+      </Stack>
 
-      {/* TODO: Render the ProductList component and pass filtered products */}
-      
+      <ProductList products={filteredProducts} setProducts={setProducts} />
     </div>
   );
-};
-
-export default App;
+}
